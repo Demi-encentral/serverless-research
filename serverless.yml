@@ -1,4 +1,4 @@
-service: esl-testapp
+service: serverless-test
 frameworkVersion: '3'
 useDotenv: true
 
@@ -11,43 +11,28 @@ provider:
     role: arn:aws:iam::494763483344:group/esl_serverless_group
   stage: staging
   timeout: 30
-  endpointType: PRIVATE
-  # PROD
-  # vpcEndpointIds:
-  #   - vpce-064a45101e31828f6
+  vpcEndpointIds:
+    # - vpce-0a00abf9092369fc1
+    - vpce-064a45101e31828f6
   vpc:
     securityGroupIds:
+      # - sg-08fdf3242146c1302
       - sg-0ff745bb07160886c
     subnetIds:
-      - subnet-08e1de5cc781b1775
+      # - subnet-0efad544c3737c15b
+      - subnet-08e1de5cc781b1775 
 
 functions:
-  # Private api (IP whitelisted)
   test_1:
     handler: handler.greet
     role: arn:aws:iam::494763483344:role/esl_serverless_lambda
     url:
       cors: true
-    events:
-      - httpApi: '*'
-      # Override vpc config to allow access from a specific IP
-    vpc:
-      securityGroupIds:
-        - sg-04af4c4a11a37028f
-      subnetIds:
-        - subnet-08e1de5cc781b1775
   test_2:
-   # Private api (access from vpc only)
+    # Private api (access from vpc only)
     handler: handler.hello
     role: arn:aws:iam::494763483344:role/esl_serverless_lambda
     url:
       cors: true
     events:
       - httpApi: '*'
-    # Override vpc config for this function. Create a security group to only allow inbound requests from the vpc
-    vpc:
-      securityGroupIds:
-        - sg-0a37b1b933590e192
-      subnetIds:
-        - subnet-08e1de5cc781b1775
-      

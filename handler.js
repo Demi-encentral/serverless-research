@@ -21,6 +21,7 @@ async function greet(event) {
     })
 
     const responseData = await response.json()
+    console.log('Received response:', responseData)
     return {
       statusCode: 200,
       body: JSON.stringify(responseData),
@@ -35,29 +36,19 @@ async function greet(event) {
 
 async function hello(event) {
   try {
-    // Check if event.body exists and is a non-empty string
-    if (
-      !event.body ||
-      typeof event.body !== 'string' ||
-      event.body.trim() === ''
-    ) {
-      throw new Error('Event body is missing or empty')
-    }
-
-    const { email, password, endpoint } = JSON.parse(event.body)
-    const modifiedData = `Email: ${email}, Password: ${password}, Endpoint: ${endpoint}`
-
     // Prepare the response
     const responseData = {
       message: 'Data processed successfully',
-      modifiedData: modifiedData,
+      event,
     }
+    console.log(event)
 
     return {
       statusCode: 200,
       body: JSON.stringify(responseData),
     }
   } catch (error) {
+    console.error('Error processing data:', error)
     return {
       statusCode: error.response?.status || 500,
       body: JSON.stringify(error),
@@ -66,6 +57,6 @@ async function hello(event) {
 }
 
 module.exports = {
-  hello,
   greet,
+  hello,
 }
